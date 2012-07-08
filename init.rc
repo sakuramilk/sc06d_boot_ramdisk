@@ -142,6 +142,8 @@ on emmc-fs
     symlink /lib/modules/reset_modem.ko /system/lib/modules/reset_modem.ko
     symlink /lib/modules/msm-buspm-dev.ko /system/lib/modules/msm-buspm-dev.ko
     symlink /lib/modules/dma_test.ko /system/lib/modules/dma_test.ko
+    symlink /lib/modules/exfat_core.ko /system/lib/modules/exfat_core.ko
+    symlink /lib/modules/exfat_fs.ko /system/lib/modules/exfat_fs.ko
 
     exec set_crypt_meta_info /dev/block/mmcblk0p15 data
     wait /dev/block/mmcblk0p15
