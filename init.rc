@@ -17,7 +17,7 @@ sysclktz 0
 loglevel 3
 
 # setup the global environment
-    export PATH /sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
+    export PATH /sbin:/system/sbin:/system/bin:/system/xbin:/vendor/bin
     export LD_LIBRARY_PATH /vendor/lib:/system/lib
     export ANDROID_BOOTLOGO 1
     export ANDROID_ROOT /system
@@ -55,6 +55,9 @@ loglevel 3
     mkdir /cache 0770 system cache
     mkdir /config 0500 root root
     mkdir /efs 0771 system radio
+
+# bootanimation wait one loop
+    setprop sys.bootanim_wait 1
 
 #add booting sound property
     setprop audioflinger.bootsnd 1
@@ -768,10 +771,10 @@ service powersnd /system/bin/samsungpowersoundplay
     group system
     oneshot
 
-service samsungani /system/bin/samsungani
+service samsungani /sbin/bootanimation.sh
     class main
-    user graphics
-    group graphics system
+    user root
+    group root graphics system
     disabled
     oneshot
 
@@ -942,4 +945,7 @@ on property:sys.qseecomd.enable=true
 on property:ro.yas.enable=true
 	start orientationd
 	start geomagneticd
+
+on property:sys.bootanim_completed=1
+    stop samsungani
 
