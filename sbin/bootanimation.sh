@@ -1,4 +1,4 @@
-#!/sbin/busybox sh
+#!/system/bin/sh
 
 if [ -f /data/local/bootanimation.bin ]; then
   /data/local/bootanimation.bin
