@@ -127,7 +127,19 @@ on boot
     chmod 0600 /system/etc/mcafee/mfescand.conf
 
 # FeliCa
-    mkdir /efs/FeliCaLock 0770 system felicalock
+    mkdir /efs/FeliCaLock 0777 system 9004
+#    chown system 9004 /system/app/FeliCaLock.odex
+#    chmod 0640 /system/app/FeliCaLock.odex
+#    chown system 9004 /system/app/FeliCaRemoteLock.odex
+#    chmod 0640 /system/app/FeliCaRemoteLock.odex
+#    chown system 9000 /system/app/MobileFeliCaClient.odex
+#    chmod 0640 /system/app/MobileFeliCaClient.odex
+#    chown system 9001 system/app/MobileFeliCaMenuApp.odex
+#    chmod 0640 /system/app/MobileFeliCaClient.odex
+#    chown system 9002 system/app/MobileFeliCaSettingApp.odex
+#    chmod 0640 /system/app/MobileFeliCaSettingApp.odex
+#    chown system 9003 system/app/MobileFeliCaWebPluginBoot.odex
+#    chmod 0640 /system/app/MobileFeliCaWebPluginBoot.odex
 
 # isdbt ownership
     chown system system /dev/isdbt
