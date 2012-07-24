@@ -189,9 +189,9 @@ service servicemanager /system/bin/servicemanager
 	onrestart restart TvoutService_C     
 
 # docomo virus scan - start daemon
-service mfescand /system/bin/mfescand 
-     class main
-     socket mfescand stream 600 system system 
+#service mfescand /system/bin/mfescand 
+#     class main
+#     socket mfescand stream 600 system system 
 
 # for felica
 service mfsc /system/bin/mfsc
