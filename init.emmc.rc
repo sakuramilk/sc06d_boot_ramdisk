@@ -122,6 +122,11 @@ on emmc-fs
 # wifi
     mkdir /efs/wifi 0775 system system
 
+# wifi for SC06D
+    write /data/.cid.info murata
+    chown root root /data/.cid.info
+    chmod 0666 /data/.cid.info
+
 # Permission for fast dormacy for RIL
     chown system radio /sys/devices/virtual/sec/bamdmux/waketime
 
