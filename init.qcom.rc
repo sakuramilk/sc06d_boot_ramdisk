@@ -28,6 +28,7 @@
 import init.qcom.usb.rc
 import init.bt.rc
 import init.sensor.rc
+import init.vendor.rc
 
 on init
     # Set permissions for persist partition
@@ -128,18 +129,11 @@ on boot
 
 # FeliCa
     mkdir /efs/FeliCaLock 0777 system 9004
-#    chown system 9004 /system/app/FeliCaLock.odex
-#    chmod 0640 /system/app/FeliCaLock.odex
-#    chown system 9004 /system/app/FeliCaRemoteLock.odex
-#    chmod 0640 /system/app/FeliCaRemoteLock.odex
-#    chown system 9000 /system/app/MobileFeliCaClient.odex
-#    chmod 0640 /system/app/MobileFeliCaClient.odex
-#    chown system 9001 system/app/MobileFeliCaMenuApp.odex
-#    chmod 0640 /system/app/MobileFeliCaClient.odex
-#    chown system 9002 system/app/MobileFeliCaSettingApp.odex
-#    chmod 0640 /system/app/MobileFeliCaSettingApp.odex
-#    chown system 9003 system/app/MobileFeliCaWebPluginBoot.odex
-#    chmod 0640 /system/app/MobileFeliCaWebPluginBoot.odex
+    chown 9004 9004 /efs/FeliCaLock/01
+    chmod 0666 /efs/FeliCaLock/01
+    chown 9004 9004 /efs/FeliCaLock/02
+    chmod 0666 /efs/FeliCaLock/02
+
 
 # isdbt ownership
     chown system system /dev/isdbt
