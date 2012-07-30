@@ -5,6 +5,7 @@ on early-init
 
     mkdir /mnt/external_sd 0000 system system
     symlink /mnt/external_sd /external_sd
+    symlink /mnt/external_sd /mnt/extSdCard
 
     mkdir /mnt/usbdisk 0755 system system
 

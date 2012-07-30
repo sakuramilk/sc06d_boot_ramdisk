@@ -38,17 +38,6 @@ service qcamerasvr /system/bin/mm-qcamera-daemon
 #    user system
 #    group qcom_oncrpc
 
-on early-init
-    export SECONDARY_STORAGE /mnt/extSdCard:/mnt/UsbDriveA:/mnt/UsbDriveB:/mnt/UsbDriveC:/mnt/UsbDriveD:/mnt/UsbDriveE:/mnt/UsbDriveF
-
-    mkdir /mnt/extSdCard 0000 system system
-    mkdir /mnt/UsbDriveA 0000 system system
-    mkdir /mnt/UsbDriveB 0000 system system
-    mkdir /mnt/UsbDriveC 0000 system system
-    mkdir /mnt/UsbDriveD 0000 system system
-    mkdir /mnt/UsbDriveE 0000 system system
-    mkdir /mnt/UsbDriveF 0000 system system
-    
 # on emmc mount the partition containing firmware
 on emmc-fs
    mkdir /tombstones 0771 system system
