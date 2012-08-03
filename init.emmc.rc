@@ -6,6 +6,7 @@ on early-init
     mkdir /mnt/external_sd 0000 system system
     symlink /mnt/external_sd /external_sd
     symlink /mnt/external_sd /mnt/extSdCard
+    symlink /mnt/extSdCard /extSdCard
 
     mkdir /mnt/usbdisk 0755 system system
 
@@ -28,8 +29,8 @@ on early-fs
     insmod /lib/modules/bthid.ko
 
 # files for exfat
-    insmod /system/lib/modules/exfat_core.ko
-    insmod /system/lib/modules/exfat_fs.ko
+    insmod /lib/modules/exfat_core.ko
+    insmod /lib/modules/exfat_fs.ko
 
 on emmc-fs
 # mount mmc partitions
@@ -61,10 +62,6 @@ on emmc-fs
     symlink /lib/modules/dma_test.ko /system/lib/modules/dma_test.ko
     symlink /lib/modules/exfat_core.ko /system/lib/modules/exfat_core.ko
     symlink /lib/modules/exfat_fs.ko /system/lib/modules/exfat_fs.ko
-
-# ko files for exfat
-    insmod /system/lib/modules/exfat_core.ko
-    insmod /system/lib/modules/exfat_fs.ko
 
     mount tmpfs tmpfs /system/etc/snd_soc_msm
     symlink /res/etc/snd_soc_msm/Call_DL_Rec /system/etc/snd_soc_msm/Call_DL_Rec
