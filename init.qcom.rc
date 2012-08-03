@@ -28,7 +28,6 @@
 import init.qcom.usb.rc
 import init.bt.rc
 import init.sensor.rc
-import init.vendor.rc
 
 on init
     # Set permissions for persist partition
@@ -48,6 +47,7 @@ on post-fs-data
     chown media_rw media_rw /data/media
 
 on boot
+    mount debugfs /sys/kernel/debug /sys/kernel/debug
     exec system/bin/btnvtool -O
     setprop ro.bt.bdaddr_path "/efs/bluetooth/bt_addr"
     chown bluetooth bluetooth ro.bt.bdaddr_path
@@ -123,17 +123,20 @@ on boot
     write /proc/sys/net/ipv6/conf/rmnet_sdio6/accept_ra 2
     write /proc/sys/net/ipv6/conf/rmnet_sdio7/accept_ra 2
 
-# docomo virus scan - set permission
-    chmod 0700 /system/etc/mcafee
-    chmod 0600 /system/etc/mcafee/mfescand.conf
-
 # FeliCa
     mkdir /efs/FeliCaLock 0777 system 9004
-    chown 9004 9004 /efs/FeliCaLock/01
-    chmod 0666 /efs/FeliCaLock/01
-    chown 9004 9004 /efs/FeliCaLock/02
-    chmod 0666 /efs/FeliCaLock/02
-
+#    chown system 9004 /system/app/FeliCaLock.odex
+#    chmod 0640 /system/app/FeliCaLock.odex
+#    chown system 9004 /system/app/FeliCaRemoteLock.odex
+#    chmod 0640 /system/app/FeliCaRemoteLock.odex
+#    chown system 9000 /system/app/MobileFeliCaClient.odex
+#    chmod 0640 /system/app/MobileFeliCaClient.odex
+#    chown system 9001 system/app/MobileFeliCaMenuApp.odex
+#    chmod 0640 /system/app/MobileFeliCaClient.odex
+#    chown system 9002 system/app/MobileFeliCaSettingApp.odex
+#    chmod 0640 /system/app/MobileFeliCaSettingApp.odex
+#    chown system 9003 system/app/MobileFeliCaWebPluginBoot.odex
+#    chmod 0640 /system/app/MobileFeliCaWebPluginBoot.odex
 
 # isdbt ownership
     chown system system /dev/isdbt
@@ -181,11 +184,6 @@ service servicemanager /system/bin/servicemanager
     onrestart restart surfaceflinger
     onrestart restart drm
 	onrestart restart TvoutService_C     
-
-# docomo virus scan - start daemon
-#service mfescand /system/bin/mfescand 
-#     class main
-#     socket mfescand stream 600 system system 
 
 # for felica
 service mfsc /system/bin/mfsc
@@ -236,6 +234,10 @@ on post-fs-data
     chown system system /sys/devices/platform/msm_sdcc.3/polling
     chown system system /sys/devices/platform/msm_sdcc.4/polling
 
+    # For disabling softkeys
+    chown root system /sys/class/leds/button-backlight/max_brightness
+    chmod 0664 /sys/class/leds/button-backlight/max_brightness
+
     #Create the symlink to qcn wpa_supplicant folder for ar6000 wpa_supplicant
     mkdir /data/system 0775 system system
     symlink /data/misc/wifi/wpa_supplicant /data/system/wpa_supplicant
@@ -272,10 +274,6 @@ on post-fs-data
     # Enable the setgid bit on the directory
     chmod 2770 /data/bluetooth
 
-# MTP Device permission.
-    chmod 0660 /dev/usb_mtp_gadget
-    chown system system /dev/usb_mtp_gadget
-
     # Enabling a thermal daemon
     setprop persist.thermal.monitor true
 
@@ -299,7 +297,8 @@ on property:ro.board.platform=msm7630_fusion
 
 on property:init.svc.wpa_supplicant=stopped
     stop dhcpcd
-
+on property:init.svc.p2p_supplicant=stopped
+    stop dhcpcd
 on property:bluetooth.isEnabled=true
     start btwlancoex
     write /sys/class/bluetooth/hci0/idle_timeout 7000
@@ -315,8 +314,8 @@ on property:persist.cne.UseCne=vendor
 on property:persist.cne.UseCne=Vendor
     start cnd
 
-service rmt_storage /system/bin/rmt_storage /dev/block/mmcblk0p12 /dev/block/mmcblk0p13 /dev/block/mmcblk0p17
-    class late_start
+service rmt_storage /system/bin/rmt_storage
+    class core
     user root
     disabled
 
@@ -432,8 +431,20 @@ service wpa_supplicant /system/bin/wpa_supplicant \
     socket wpa_wlan0 dgram 660 wifi wifi
     disabled
     oneshot
+# New supplicant service config to support both BCM4334 / WCN3660
+service p2p_supplicant /system/bin/wpa_supplicant \
+    -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf -N \
+    -ip2p0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf -e/data/misc/wifi/entropy.bin -puse_p2p_group_interface=1
+    #   we will start as root and wpa_supplicant will switch to user wifi
+    #   after setting up the capabilities required for WEXT
+    #   user wifi
+    #   group wifi inet keystore
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
 
-service dhcpcd_wlan0 /system/bin/dhcpcd -ABKL
+service dhcpcd_wlan0 /system/bin/dhcpcd -aABKL
     class main
     disabled
     oneshot
@@ -443,19 +454,31 @@ service dhcpcd_p2p /system/bin/dhcpcd -aABKL
     disabled
     oneshot
 
+service dhcpcd_bnep0 /system/bin/dhcpcd -ABKL
+    class main
+    disabled
+    oneshot
+
+service dhcpcd_eth0 /system/bin/dhcpcd -ABKL
+    class main
+    disabled
+    oneshot
+
 service iprenew_wlan0 /system/bin/dhcpcd -n
     class main
     disabled
     oneshot
 
-service iprenew_p2p /system/bin/dhcpcd -n p2p
+service iprenew_p2p /system/bin/dhcpcd -n
     class main
     disabled
     oneshot
 
-service dhcpcd_bnep0 /system/bin/dhcpcd -BKLG
+service iprenew_bnep0 /system/bin/dhcpcd -n
+    class main
     disabled
     oneshot
+
 
 #service wiperiface /system/bin/wiperiface
 #    user location
