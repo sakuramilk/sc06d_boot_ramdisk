@@ -28,11 +28,11 @@ on early-fs
     # ko files for bthid
     insmod /lib/modules/bthid.ko
 
-# files for exfat
+on emmc-fs
+# insmod the exfat modules
     insmod /lib/modules/exfat_core.ko
     insmod /lib/modules/exfat_fs.ko
 
-on emmc-fs
 # mount mmc partitions
     wait /dev/block/mmcblk0p14
     mount ext4 /dev/block/mmcblk0p14 /system ro barrier=1
